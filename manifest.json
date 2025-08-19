@@ -4,7 +4,8 @@
   "name":"Lingual",
   "content_scripts":[
    {
-    "matches":["<all_urls>"],
+    "matches":["https://www.youtube.com/watch?v=8bNsCBkX_bA"],
+    "css":["styles.v1.css"],
     "js":["main.js"]
    }
   ]
