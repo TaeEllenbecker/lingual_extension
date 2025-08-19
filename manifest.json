@@ -4,7 +4,7 @@
   "name":"Lingual",
   "content_scripts":[
    {
-    "matches":["https://www.youtube.com/watch?v=8bNsCBkX_bA"],
+    "matches":["https://www.w3schools.com/*"],
     "css":["styles.v1.css"],
     "js":["main.js"]
    }

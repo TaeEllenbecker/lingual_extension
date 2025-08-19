@@ -16,18 +16,24 @@ function injectSubtitleStyle() {
       transition: color 0.3s ease;
     }
 
+    /*Clicked word Styling*/
+    .clicked-word{
+    background-color: rgba(176, 97, 255, .6);
+    border-radius: 5px;
+    }
+
     /* Tooltip styling */
     .translation-tooltip {
       position: absolute;
       background: #B061FF;
-      color: #fff;
+      color: black;
       padding: 6px 10px;
       border-radius: 5px;
       font-size: 14px;
       z-index: 9999;
       pointer-events: none;
-      min-width: 250px;
-      min-height: 200px;
+      max-width: 250px;
+      max-height: 200px;
       display: none;
     }
   `;
@@ -44,10 +50,18 @@ document.body.appendChild(tooltip);
 
 
 
-// Track hovered word
-document.addEventListener('mousemove', (e) => {
+// Track the last created span so it can be removed on the next click
+let lastClickedSpan = null;
+document.addEventListener('click', (e) => {
+  // Remove the previous span if it exists
+  if (lastClickedSpan && lastClickedSpan.parentNode) {
+    lastClickedSpan.parentNode.replaceChild(document.createTextNode(lastClickedSpan.textContent), lastClickedSpan);
+    lastClickedSpan = null;
+  }
+
   let range, textNode, offset;
 
+  //gets position of the word in the webpage
   if (document.caretPositionFromPoint) { // Firefox, modern
     const pos = document.caretPositionFromPoint(e.clientX, e.clientY);
     textNode = pos?.offsetNode;
@@ -58,29 +72,49 @@ document.addEventListener('mousemove', (e) => {
     offset = range?.startOffset;
   }
 
+  //if the clicked thing is text
   if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+    //the actual texts content
     const text = textNode.textContent;
 
     // Find word boundaries around the offset
     const left = text.slice(0, offset).search(/\S+$/);
     const right = text.slice(offset).search(/\s/);
 
+    //single out the word
     const word = right === -1 ? text.slice(left) : text.slice(left, offset + right);
 
     if (word && word.trim()) {
-      tooltip.textContent = word; // <-- later replace with "translation"
+      //style the clicked word in the dom
+      const span = document.createElement('span');
+      span.className = 'clicked-word';
+      span.textContent = word;
+
+      // Split the text node into before, word, after
+      const before = text.slice(0, left);
+      const after = right === -1 ? '' : text.slice(offset + right);
+
+      // Replace the text node with the new nodes
+      const parent = textNode.parentNode;
+      if (parent) {
+        const frag = document.createDocumentFragment();
+        if (before) frag.appendChild(document.createTextNode(before));
+        frag.appendChild(span);
+        if (after) frag.appendChild(document.createTextNode(after));
+        parent.replaceChild(frag, textNode);
+        lastClickedSpan = span;
+      }
+
+      //pop up the tooltip with info
+      tooltip.textContent = word;
       tooltip.style.display = 'block';
-      tooltip.style.left = e.pageX + 10 + 'px';
-      tooltip.style.top = e.pageY + 20 + 'px';
+      const rect = span.getBoundingClientRect();
+      tooltip.style.left = window.scrollX + rect.left + 'px';
+      tooltip.style.top = window.scrollY + rect.bottom + 6 + 'px';
     } else {
       tooltip.style.display = 'none';
     }
   } else {
     tooltip.style.display = 'none';
   }
-});
-
-// Hide tooltip when leaving document
-document.addEventListener('mouseout', () => {
-  tooltip.style.display = 'none';
 });
