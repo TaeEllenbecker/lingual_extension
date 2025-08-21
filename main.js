@@ -106,7 +106,22 @@ document.addEventListener('click', (e) => {
       }
 
       //pop up the tooltip with info
-      tooltip.textContent = word;
+      chrome.runtime.sendMessage(
+        {
+          action: "translate",
+          text: word,
+          source: "en",   // or "auto" if you want LibreTranslate to auto-detect
+          target: "ko"
+        },
+        (response) => {
+          if (response.result) {
+            tooltip.textContent = response.result;
+          } else {
+            tooltip.textContent = "Error: " + response.error;
+          }
+        }
+      );
+
       tooltip.style.display = 'block';
       const rect = span.getBoundingClientRect();
       tooltip.style.left = window.scrollX + rect.left + 'px';
