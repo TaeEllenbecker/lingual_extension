@@ -1,12 +1,26 @@
 {
-  "manifest_version":2,
-  "version":"1.0",
-  "name":"Lingual",
-  "content_scripts":[
-   {
-    "matches":["https://www.w3schools.com/*"],
-    "css":["styles.v1.css"],
-    "js":["main.js"]
-   }
+  "name": "Lingual",
+  "description": "Click a word, highlight it, and show translation tooltip",
+  "version": "1.0",
+  "manifest_version": 3,
+
+  "permissions": [
+    "scripting",
+    "activeTab"
+  ],
+
+  "host_permissions": [
+    "http://localhost:5000/*"
+  ],
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["main.js"]
+    }
   ]
 }
