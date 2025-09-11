@@ -43,17 +43,18 @@ function injectSubtitleStyle() {
 injectSubtitleStyle();
 
 
-// Create tooltip element
+// tool tip element
 const tooltip = document.createElement('div');
 tooltip.className = 'translation-tooltip';
 document.body.appendChild(tooltip);
 
 
 
-// Track the last created span so it can be removed on the next click
+// track the span created for the last clicked sentence/word so it can be deleted
 let lastClickedSpan = null;
+
 document.addEventListener('click', (e) => {
-  // Remove the previous span if it exists
+  //remove span
   if (lastClickedSpan && lastClickedSpan.parentNode) {
     lastClickedSpan.parentNode.replaceChild(document.createTextNode(lastClickedSpan.textContent), lastClickedSpan);
     lastClickedSpan = null;
@@ -62,39 +63,41 @@ document.addEventListener('click', (e) => {
   let range, textNode, offset;
 
   //gets position of the word in the webpage
-  if (document.caretPositionFromPoint) { // Firefox, modern
+  if (document.caretPositionFromPoint){ // firefox
     const pos = document.caretPositionFromPoint(e.clientX, e.clientY);
     textNode = pos?.offsetNode;
     offset = pos?.offset;
-  } else if (document.caretRangeFromPoint) { // Chrome, Safari
+  }
+  else if (document.caretRangeFromPoint) {// chrome or safari
     range = document.caretRangeFromPoint(e.clientX, e.clientY);
     textNode = range?.startContainer;
     offset = range?.startOffset;
   }
 
   //if the clicked thing is text
+  //if the clicked thing is text
   if (textNode && textNode.nodeType === Node.TEXT_NODE) {
-    //the actual texts content
     const text = textNode.textContent;
 
-    // Find word boundaries around the offset
-    const left = text.slice(0, offset).search(/\S+$/);
-    const right = text.slice(offset).search(/\s/);
+    // Find sentence boundaries around the offset
+    const leftBoundary = text.slice(0, offset).lastIndexOf(".") + 1; // after last period
+    const rightBoundary = text.indexOf(".", offset);
 
-    //single out the word
-    const word = right === -1 ? text.slice(left) : text.slice(left, offset + right);
+    // If no right period found, take until end
+    const sentence =
+      rightBoundary === -1
+        ? text.slice(leftBoundary).trim()
+        : text.slice(leftBoundary, rightBoundary + 1).trim();
 
-    if (word && word.trim()) {
-      //style the clicked word in the dom
-      const span = document.createElement('span');
-      span.className = 'clicked-word';
-      span.textContent = word;
+    if (sentence) {
+      // Style the clicked sentence in the DOM
+      const span = document.createElement("span");
+      span.className = "clicked-word"; // you may rename class since now it's sentence
+      span.textContent = sentence;
 
-      // Split the text node into before, word, after
-      const before = text.slice(0, left);
-      const after = right === -1 ? '' : text.slice(offset + right);
+      const before = text.slice(0, leftBoundary);
+      const after = rightBoundary === -1 ? "" : text.slice(rightBoundary + 1);
 
-      // Replace the text node with the new nodes
       const parent = textNode.parentNode;
       if (parent) {
         const frag = document.createDocumentFragment();
@@ -105,13 +108,13 @@ document.addEventListener('click', (e) => {
         lastClickedSpan = span;
       }
 
-      //pop up the tooltip with info
+      // Send the whole sentence for translation
       chrome.runtime.sendMessage(
         {
           action: "translate",
-          text: word,
-          source: "en",   // or "auto" if you want LibreTranslate to auto-detect
-          target: "ko"
+          text: sentence,
+          source: "en", // or "auto"
+          target: "es",
         },
         (response) => {
           if (response.result) {
@@ -122,14 +125,15 @@ document.addEventListener('click', (e) => {
         }
       );
 
-      tooltip.style.display = 'block';
+      tooltip.style.display = "block";
       const rect = span.getBoundingClientRect();
-      tooltip.style.left = window.scrollX + rect.left + 'px';
-      tooltip.style.top = window.scrollY + rect.bottom + 6 + 'px';
+      tooltip.style.left = window.scrollX + rect.left + "px";
+      tooltip.style.top = window.scrollY + rect.bottom + 6 + "px";
     } else {
-      tooltip.style.display = 'none';
+      tooltip.style.display = "none";
     }
-  } else {
+  }
+ else {
     tooltip.style.display = 'none';
   }
 });
