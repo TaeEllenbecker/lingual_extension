@@ -24,7 +24,6 @@ The goal is to allow users to click on words and/or sentences on any webpage, hi
 
 ## 🛠️ Tools & Process
 - **Project Management**: Kanban board on **Jira**  
-- **Documentation**: **Doxygen** for code documentation  
 - **Translation Backend**: **LibreTranslate** (open-source models)  
 - **Version Control**: Git + GitHub  
 
