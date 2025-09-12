@@ -1,4 +1,4 @@
-# 🌐 Lingual – Browser Extension (WIP)
+# 🌐 Lingual – Browser Extension
 
 Lingual is a browser extension designed to make language learning more interactive.  
 The goal is to allow users to click on words and/or sentences on any webpage, highlight them, and display instant translations in a tooltip.
