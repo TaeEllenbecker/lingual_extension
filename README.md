@@ -29,6 +29,6 @@ The goal is to allow users to click on words and/or sentences on any webpage, hi
 
 ---
 
-## 📌 Status
+## Status
 This extension is currently **in active development** and not ready for production use.  
 Stay tuned for updates as core features are implemented.  
