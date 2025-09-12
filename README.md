@@ -5,14 +5,14 @@ The goal is to allow users to click on words and/or sentences on any webpage, hi
 
 ---
 
-## 🎯 Purpose
+## Purpose
 - Help language learners get quick translations without having to leaving the page  
 - Provide context by highlighting the selected text  
 - Serve as a foundation for a larger language learning tool  
 
 ---
 
-## 🚀 Planned Features
+## Planned Features
 - Click-to-translate with tooltip display  
 - Integration with **LibreTranslate** open-source translation models  
 - Configurable language pairs  
@@ -22,7 +22,7 @@ The goal is to allow users to click on words and/or sentences on any webpage, hi
 
 ---
 
-## 🛠️ Tools & Process
+## Tools & Process
 - **Project Management**: Kanban board on **Jira**  
 - **Translation Backend**: **LibreTranslate** (open-source models)  
 - **Version Control**: Git + GitHub  
