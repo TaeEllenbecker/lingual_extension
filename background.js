@@ -1,8 +1,17 @@
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+var PORT = "http://localhost:5000/translate";
+
+chrome.runtime.onMessage.addListener(translateMessage);
+
+function translateMessage(message, sender, sendResponse) {
+  console.log(`Message received: ${translate.message}`);
+  sendResponse({response: "Response from background"});
+
+  /*
+  console.log("received");
   if (message.action === "translate") {
-    fetch("http://localhost:5000/translate", {
+    fetch(PORT), {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type" : "application/json" },
       body: JSON.stringify({
         q: message.text,
         source: message.source,
@@ -12,8 +21,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     })
       .then(res => res.json())
       .then(data => sendResponse({ result: data.translatedText }))
-      .catch(err => sendResponse({ error: err.toString() }));
-
-    return true; // keep the channel open for async response
+      .catch(err => sendResponse({error: err.toString() }));
+    return true;
   }
-});
+  */
+  
+}
