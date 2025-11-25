@@ -1,81 +1,39 @@
 console.log("Translation hover extension running");
 
-// Function to inject hover style
-function injectSubtitleStyle() {
-  if (!document.head) {
-    requestAnimationFrame(injectSubtitleStyle);
-    return;
-  }
-
-  const style = document.createElement('style');
-  style.textContent = `
-    /* Tooltip styling */
-    .translation-tooltip {
-      position: absolute;
-      background: #B061FF;
-      color: black;
-      padding: 6px 10px;
-      border-radius: 5px;
-      font-size: 14px;
-      z-index: 9999;
-      pointer-events: none;
-      max-width: 275px;
-      max-height: 275px;
-      display: none;
-    }
-  `;
-  document.head.appendChild(style);
+/**
+ * @function handleTranslation
+ * @description Handles and logs incoming translation from background.js
+ * @param {json} text - json from background script
+ * returns {void}
+ */
+function handleTranslation(text){
+  console.log(text?.res);
 }
 
-injectSubtitleStyle();
-
-
-// tool tip element
-const tooltip = document.createElement('div');
-tooltip.className = 'translation-tooltip';
-
-// put tool tip into webpage
-document.body.appendChild(tooltip);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/**
+ * @function handleTranslationError
+ * @description Handles and logs error produced from background.js 
+ * @param {Error} Error object
+ * returns {void}
+ */
+function handleTranslationError(error){
+  console.log(`Error: ${error}`);
+}
 /** 
  * Get the highlighted text
- * @function notifyBackground
+ * @function selectionSend 
  * @param {MouseEvent} e - Mouse event object triggered from 'mouseup' action
  * @returns {void}
  * @listens document#mouseup
  */
-function notifyBackground(e) { 
+function selectionSend(e) { 
   let selection = document.getSelection ? document.getSelection().toString() :  document.selection.createRange().toString() ;
-  console.log(selection);
-
-  const response = chrome.runtime.sendMessage({
-    translate: selection,
+  // console.log(`Selection: ${selection}`);
+  var response = chrome.runtime.sendMessage({
+    translate: selection
   });
-  response.then(console.log(response));
-  console.log(response);
-  
-
-  //STUCK HERE, CANT GET PromiseResult TO NOT BE undefined
+  response.then(handleTranslation,handleTranslationError);
 }
 
-document.onmouseup = notifyBackground;
+// when text is highlighted trigger 
+document.onmouseup = selectionSend;

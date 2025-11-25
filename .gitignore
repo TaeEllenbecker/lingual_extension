@@ -1,4 +1,3 @@
-# Doxygen generated docs
-docs/
-html/
-latex/
+# jsdoc
+out/*
+*.html
